@@ -12,7 +12,27 @@ namespace DataAccess
         }
 
 
-        public DbSet<Wallet> Wallets { get; set; }
+        public DbSet<User> Users { get; set; }
 
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>().HasData(
+                new User
+                {
+                    Id = 1,
+                    FirstName = "Levon",
+                    LastName = "Mardanyan",
+                },
+                new User
+                {
+                    Id = 2,
+                    FirstName = "admin",
+                    LastName = "admin",
+                }
+                );
+
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }
