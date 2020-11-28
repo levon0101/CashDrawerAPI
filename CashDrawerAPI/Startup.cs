@@ -1,3 +1,5 @@
+using System;
+using AutoMapper;
 using CashDrawerAPI.Repositories;
 using DataAccess;
 using Microsoft.AspNetCore.Builder;
@@ -27,7 +29,9 @@ namespace CashDrawerAPI
             services.AddScoped<IUserRepository, UserRepository>();
 
             services.AddSingleton<IEuroRateProvider>(sp=>new EuroRateProvider(Configuration.GetValue<string>("RateUrls:EuroRateUrl")));
-
+          
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+           
             services.AddDbContext<AppDbContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));

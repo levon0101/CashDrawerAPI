@@ -16,7 +16,7 @@ namespace CashDrawerAPI.Repositories
         }
 
 
-        public User GetUser(int id)
+        public User GetUser(long id)
         {
             return _dbContext.Users.SingleOrDefault(u => u.Id == id);
         }

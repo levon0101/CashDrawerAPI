@@ -5,7 +5,7 @@ namespace CashDrawerAPI.Repositories
 {
     public interface IUserRepository
     {
-        User GetUser(int id);
+        User GetUser(long id);
         IEnumerable<User> GetUsers();
         void AddUser(User user);
         void DeleteUser(User user);

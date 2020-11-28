@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using CashDrawerAPI.Repositories;
 using DataAccess;
+using Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Models;
 
@@ -16,42 +18,77 @@ namespace CashDrawerAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
+        private readonly IMapper _mapper;
 
-        public UserController(IUserRepository userRepository)
+        public UserController(IUserRepository userRepository, IMapper mapper)
         {
             _userRepository = userRepository;
+            _mapper = mapper;
         }
 
-        // GET: api/<UserController>
         [HttpGet]
-        public IEnumerable<User> Get()
+        public ActionResult<IEnumerable<UserDto>> GetAllUsers()
         {
-            return _userRepository.GetUsers();
+            var usersFromRepo = _userRepository.GetUsers();
+
+            if (usersFromRepo == null) return NotFound();
+
+
+            return Ok(_mapper.Map<IEnumerable<UserDto>>(usersFromRepo));
         }
 
-        // GET api/<UserController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("{id}", Name = "GetUser")]
+        public ActionResult<UserDto> GetUser(long id)
         {
-            return "value";
+            var userFromDb = _userRepository.GetUser(id);
+
+            if (userFromDb == null) return NotFound();
+
+            return Ok(_mapper.Map<User, UserDto>(userFromDb));
         }
 
-        // POST api/<UserController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public IActionResult CreateUser([FromBody] UserDto user)
         {
+            var userEntity = _mapper.Map<User>(user);
+
+            _userRepository.AddUser(userEntity);
+
+            var userToReturn = _mapper.Map<UserDto>(userEntity);
+
+
+            return CreatedAtRoute("GetUser", new { id = user.Id }, userToReturn);
         }
 
-        // PUT api/<UserController>/5
+
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public IActionResult UpdateUser(int id, [FromBody] UserDto user)
         {
+            var userFromDb = _userRepository.GetUser(id);
+
+            if (userFromDb == null) return NotFound();
+
+
+            userFromDb.FirstName = user.FirstName;
+            userFromDb.LastName = user.LastName; 
+
+            _userRepository.SaveChanges();
+
+            var userToReturn = _mapper.Map<UserDto>(userFromDb);
+
+            return CreatedAtRoute("GetUser", new { id = id }, userToReturn);
         }
 
-        // DELETE api/<UserController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult RemoveUser(int id)
         {
+            var userFromDb = _userRepository.GetUser(id);
+
+            if (userFromDb == null) return NotFound();
+
+            _userRepository.DeleteUser(userFromDb);
+
+            return NoContent();
         }
     }
 }
