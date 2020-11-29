@@ -1,25 +1,24 @@
-﻿
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Models
 {
-    public class User
+    public class WalletCurrency
     {
         public long Id { get; set; }
 
-        [ForeignKey("Wallet")]
+        public long CurrencyId { get; set; }
+
         public long WalletId { get; set; }
 
-        [MaxLength(50)]
         [Required]
-        public string FirstName { get; set; }
-
-        [MaxLength(50)]
-        [Required]
-        public string LastName { get; set; }
+        public Currency Currency { get; set; }
 
         [Required]
         public Wallet Wallet { get; set; }
+
+        [Required]
+        public double Balance { get; set; }
     }
 }
