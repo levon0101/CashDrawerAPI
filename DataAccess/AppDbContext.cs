@@ -11,68 +11,93 @@ namespace DataAccess
         }
 
 
-        public DbSet<User> Users { get; set; }
-        public DbSet<Currency> Currencies { get; set; }
+        public DbSet<User> Users { get; set; } 
         public DbSet<Wallet> Wallets { get; set; }
-        public DbSet<WalletCurrency> WalletCurrencies { get; set; }
+        public DbSet<UserWallet> UserWallets { get; set; }
 
-
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //modelBuilder.Entity<User>()
-            //    .HasOne(u => u.Wallet) // Mark Address property optional in Student entity
-            //    .WithOne(w => w.User)
-            //    .IsRequired();
-
-            modelBuilder.Entity<Currency>().HasData(
-                new Currency
-                {
-                    Id = 1,
-                    CurrencyCode = "EUR",
-                    Name = "Euro"
-                },
-                new Currency
-                {
-                    Id = 2,
-                    CurrencyCode = "USD",
-                    Name = "US Dollar"
-                },
-                new Currency
-                {
-                    Id = 3,
-                    CurrencyCode = "RUB",
-                    Name = "Ruble"
-                });
-
-            //modelBuilder.Entity<Wallet>().HasData(
-            //new Wallet
-            //{
-            //    Id = 1,
-            //    UserId = 1
-            //},
-            //new Wallet
-            //{
-            //    Id = 2,
-            //    UserId = 2
-            //});
-
+            
             modelBuilder.Entity<User>().HasData(
                 new User
                 {
                     Id = 1,
                     FirstName = "Levon",
-                    LastName = "Mardanyan",
-                    Wallet = new Wallet{Id = 1}
+                    LastName = "Mardanyan"
                 },
                 new User
                 {
                     Id = 2,
                     FirstName = "admin",
-                    LastName = "admin",
-                    Wallet = new Wallet { Id = 1 }
+                    LastName = "admin"
                 });
 
-            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Wallet>().HasData(
+            new Wallet
+            {
+                Id = 1,
+                CurrencyCode = "EUR",
+                CurrencyName = "Euro",
+                Description = "European Euro"
+
+            },
+            new Wallet
+            {
+                Id = 2,
+                CurrencyCode = "USD",
+                CurrencyName = "Dollar",
+                Description = "US Dollar"
+            },
+            new Wallet
+            {
+                Id = 3,
+                CurrencyCode = "RUB",
+                CurrencyName = "Ruble",
+                Description = "Russian Ruble"
+            });
+
+
+            modelBuilder.Entity<UserWallet>().HasData(
+                new UserWallet
+                {
+                    Id = 1,
+                    Balance = 0,
+                    UserId = 1,
+                    WalletId = 1
+                },
+                new UserWallet
+                {
+                    Id = 2,
+                    Balance = 0,
+                    UserId = 1,
+                    WalletId = 2
+                },
+                new UserWallet
+                {
+                    Id = 3,
+                    Balance = 0,
+                    UserId = 2,
+                    WalletId = 1
+                },
+                new UserWallet
+                {
+                    Id = 4,
+                    Balance = 0,
+                    UserId = 2,
+                    WalletId = 2
+                },
+                new UserWallet
+                {
+                    Id = 5,
+                    Balance = 0,
+                    UserId = 2,
+                    WalletId = 3
+                }
+            );
+           base.OnModelCreating(modelBuilder);
         }
+
     }
 }

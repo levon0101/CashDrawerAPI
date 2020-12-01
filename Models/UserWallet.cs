@@ -4,16 +4,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Models
 {
-    public class WalletCurrency
+    public class UserWallet
     {
         public long Id { get; set; }
 
-        public long CurrencyId { get; set; }
+        public long UserId { get; set; }
 
         public long WalletId { get; set; }
 
         [Required]
-        public Currency Currency { get; set; }
+        public User User { get; set; }
 
         [Required]
         public Wallet Wallet { get; set; }

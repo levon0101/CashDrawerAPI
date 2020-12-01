@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -8,9 +9,6 @@ namespace Models
     {
         public long Id { get; set; }
 
-        [ForeignKey("Wallet")]
-        public long WalletId { get; set; }
-
         [MaxLength(50)]
         [Required]
         public string FirstName { get; set; }
@@ -19,7 +17,7 @@ namespace Models
         [Required]
         public string LastName { get; set; }
 
-        [Required]
-        public Wallet Wallet { get; set; }
+        public IEnumerable<UserWallet> UserWallets { get; set; }
+        
     }
 }
