@@ -27,6 +27,7 @@ namespace CashDrawerAPI
             services.AddControllers();
 
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IWalletRepository, WalletRepository>();
 
             services.AddSingleton<IEuroRateProvider>(sp=>new EuroRateProvider(Configuration.GetValue<string>("RateUrls:EuroRateUrl")));
           
