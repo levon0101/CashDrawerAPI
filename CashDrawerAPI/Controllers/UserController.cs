@@ -52,6 +52,11 @@ namespace CashDrawerAPI.Controllers
         {
             var userEntity = _mapper.Map<User>(user);
 
+            if (!TryValidateModel(userEntity))
+            {
+                return BadRequest();
+            }
+
             _userRepository.AddUser(userEntity);
 
             var userToReturn = _mapper.Map<UserDto>(userEntity);
@@ -70,7 +75,12 @@ namespace CashDrawerAPI.Controllers
 
 
             userFromDb.FirstName = user.FirstName;
-            userFromDb.LastName = user.LastName; 
+            userFromDb.LastName = user.LastName;
+
+            if (!TryValidateModel(userFromDb))
+            {
+                return BadRequest();
+            }
 
             _userRepository.SaveChanges();
 
