@@ -24,10 +24,11 @@ namespace CashDrawerAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson();
 
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IWalletRepository, WalletRepository>();
+            services.AddScoped<IUserWalletRepository, UserWalletRepository>();
 
             services.AddSingleton<IEuroRateProvider>(sp=>new EuroRateProvider(Configuration.GetValue<string>("RateUrls:EuroRateUrl")));
           

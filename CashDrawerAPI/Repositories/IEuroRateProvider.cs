@@ -1,6 +1,6 @@
 ﻿namespace CashDrawerAPI.Repositories
 {
-    interface IEuroRateProvider: IRateProvider
+    interface IEuroRateProvider
     {
         
     }
