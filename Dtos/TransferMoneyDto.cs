@@ -1,6 +1,6 @@
-﻿namespace CashDrawerAPI.Model
+﻿namespace Dtos
 {
-    public class TransferMoney
+    public class TransferMoneyDto
     {
         public long FromUserWalletId { get; set; }
 

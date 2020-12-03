@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
-using CashDrawerAPI.Model;
 using CashDrawerAPI.Repositories;
 using Dtos;
 using Microsoft.AspNetCore.Mvc;
@@ -18,16 +17,20 @@ namespace CashDrawerAPI.Controllers
         private readonly IUserWalletRepository _userWalletRepository;
         private readonly IUserRepository _userRepository;
         private readonly IWalletRepository _walletRepository;
+        private readonly IEuroRateProvider _euroRateProvider;
 
         public UserWalletController(IMapper mapper,
             IUserWalletRepository userWalletRepository,
             IUserRepository userRepository,
-            IWalletRepository walletRepository)
+            IWalletRepository walletRepository,
+            IEuroRateProvider euroRateProvider)
+
         {
             _mapper = mapper;
             _userWalletRepository = userWalletRepository;
             _userRepository = userRepository;
             _walletRepository = walletRepository;
+            _euroRateProvider = euroRateProvider;
         }
 
         [HttpGet("{userId}/[controller]", Name = "GetUserWallets")]
@@ -60,13 +63,13 @@ namespace CashDrawerAPI.Controllers
         }
 
         [HttpPost("[controller]/{userWalletId}/FillUp")]
-        public IActionResult FillUpWallet(long userWalletId, [FromBody] Money money)
+        public IActionResult FillUpWallet(long userWalletId, [FromBody] MoneyDto moneyDto)
         {
-            if (money.Amount <= 0) return BadRequest();
+            if (moneyDto.Amount <= 0) return BadRequest();
 
             var userWalletFromDb = _userWalletRepository.GetUserWalletById(userWalletId);
 
-            userWalletFromDb.Balance += money.Amount;
+            userWalletFromDb.Balance += moneyDto.Amount;
 
             _userWalletRepository.SaveChanges();
 
@@ -78,13 +81,13 @@ namespace CashDrawerAPI.Controllers
 
 
         [HttpPost("[controller]/{userWalletId}/Withdraw")]
-        public IActionResult WithdrawWallet(long userWalletId, [FromBody] Money money)
+        public IActionResult WithdrawWallet(long userWalletId, [FromBody] MoneyDto moneyDto)
         {
-            if (money.Amount <= 0) return BadRequest();
+            if (moneyDto.Amount <= 0) return BadRequest();
 
             var userWalletFromDb = _userWalletRepository.GetUserWalletById(userWalletId);
 
-            userWalletFromDb.Balance -= money.Amount;
+            userWalletFromDb.Balance -= moneyDto.Amount;
 
             if (userWalletFromDb.Balance < 0) return BadRequest();
 
@@ -97,23 +100,27 @@ namespace CashDrawerAPI.Controllers
         }
 
         [HttpPost("[controller]/Transfer")]
-        public IActionResult TransferWallet([FromBody] TransferMoney transferMoney)
+        public IActionResult TransferWallet([FromBody] TransferMoneyDto transferMoneyDto)
         {
-            if (transferMoney.Amount <= 0) return BadRequest();
+            var result = _euroRateProvider.GetResponse();
+
+            return Ok(result);
+
+            if (transferMoneyDto.Amount <= 0) return BadRequest();
 
 
-            var fromUserWallet = _userWalletRepository.GetUserWalletById(transferMoney.FromUserWalletId);
+            var fromUserWallet = _userWalletRepository.GetUserWalletById(transferMoneyDto.FromUserWalletId);
             if (fromUserWallet == null) return NotFound();
 
-            var toUserWallet = _userWalletRepository.GetUserWalletById(transferMoney.ToUserWalletId);
+            var toUserWallet = _userWalletRepository.GetUserWalletById(transferMoneyDto.ToUserWalletId);
             if (toUserWallet == null) return NotFound();
 
 
             if (fromUserWallet.WalletId == toUserWallet.WalletId)
             {
-                fromUserWallet.Balance -= transferMoney.Amount;
+                fromUserWallet.Balance -= transferMoneyDto.Amount;
 
-                toUserWallet.Balance += transferMoney.Amount;
+                toUserWallet.Balance += transferMoneyDto.Amount;
             }
             else
             {
@@ -126,7 +133,7 @@ namespace CashDrawerAPI.Controllers
 
             _userWalletRepository.SaveChanges();
 
-            return CreatedAtRoute("GetUserWallets", new {userId = fromUserWallet.UserId}, transferMoney);
+            return CreatedAtRoute("GetUserWallets", new {userId = fromUserWallet.UserId}, transferMoneyDto);
 
         }
 

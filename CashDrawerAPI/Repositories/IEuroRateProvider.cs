@@ -1,7 +1,10 @@
-﻿namespace CashDrawerAPI.Repositories
+﻿using System.Collections.Generic;
+using Dtos;
+
+namespace CashDrawerAPI.Repositories
 {
-    interface IEuroRateProvider
+    public interface IEuroRateProvider
     {
-        
+        IEnumerable<RateDto> GetResponse();
     }
 }

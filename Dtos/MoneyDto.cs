@@ -1,6 +1,6 @@
-﻿namespace CashDrawerAPI.Model
+﻿namespace Dtos
 {
-    public class Money
+    public class MoneyDto
     {
         public double Amount { get; set; }
     }
