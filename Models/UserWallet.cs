@@ -19,6 +19,7 @@ namespace Models
         public Wallet Wallet { get; set; }
 
         [Required]
+        [Range(0, double.MaxValue)]
         public double Balance { get; set; }
     }
 }

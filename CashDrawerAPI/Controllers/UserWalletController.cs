@@ -102,9 +102,6 @@ namespace CashDrawerAPI.Controllers
         [HttpPost("[controller]/Transfer")]
         public IActionResult TransferWallet([FromBody] TransferMoneyDto transferMoneyDto)
         {
-            var result = _euroRateProvider.GetResponse();
-
-            return Ok(result);
 
             if (transferMoneyDto.Amount <= 0) return BadRequest();
 
@@ -124,8 +121,14 @@ namespace CashDrawerAPI.Controllers
             }
             else
             {
-                throw new NotImplementedException();
+                fromUserWallet.Balance -= transferMoneyDto.Amount;
+
+                toUserWallet.Balance += _euroRateProvider
+                    .ConvertMoney(fromUserWallet.Wallet.CurrencyCode,
+                    toUserWallet.Wallet.CurrencyCode,
+                    transferMoneyDto.Amount); ;
             }
+
             if (!TryValidateModel(fromUserWallet))
             {
                 return BadRequest();
@@ -133,7 +136,7 @@ namespace CashDrawerAPI.Controllers
 
             _userWalletRepository.SaveChanges();
 
-            return CreatedAtRoute("GetUserWallets", new {userId = fromUserWallet.UserId}, transferMoneyDto);
+            return CreatedAtRoute("GetUserWallets", new { userId = fromUserWallet.UserId }, transferMoneyDto);
 
         }
 

@@ -15,7 +15,7 @@ namespace DataAccess
         public DbSet<Wallet> Wallets { get; set; }
         public DbSet<UserWallet> UserWallets { get; set; }
 
-        
+      
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             
@@ -98,6 +98,5 @@ namespace DataAccess
             );
            base.OnModelCreating(modelBuilder);
         }
-
     }
 }

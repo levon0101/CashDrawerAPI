@@ -5,6 +5,9 @@ namespace CashDrawerAPI.Repositories
 {
     public interface IEuroRateProvider
     {
-        IEnumerable<RateDto> GetResponse();
+        IEnumerable<RateDto> CurrentRates();
+        double ConvertMoney(string from, string to, double money);
+
+        double ConvertMoney(string currencyCode, double money);
     }
 }
